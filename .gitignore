@@ -1,16 +1,27 @@
-# Compiled class file
+# Maven build output
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse / NetBeans / VS Code project metadata
+.classpath
+.project
+.settings/
+nbproject/
+.vscode/
+
+# Java and JVM artifacts
 *.class
-
-# Log file
 *.log
+hs_err_pid*
+replay_pid*
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# Archives and packaged artifacts
 *.jar
 *.war
 *.nar
@@ -19,6 +30,28 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# Maven Wrapper is source-controlled; keep its optional distribution JAR trackable.
+!.mvn/
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# Local tooling and generated files
+.junie/
+.mvn/timing.properties
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+*.env
+*.local
+*.secret
+secrets/
+application-local.properties
+application-local.yml
+application-local.yaml
+
+# OS metadata
+.DS_Store
+Thumbs.db
