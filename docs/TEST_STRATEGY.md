@@ -2,7 +2,7 @@
 
 ## 1. Principles
 
-Tests are layered by determinism and external cost. Every test states its required services, credentials, network behavior, and parallelism assumptions. Default verification is deterministic and offline; the M3 Spring AI + Ollama vertical slice is real-model coverage, but remains explicitly opt-in.
+Tests are layered by determinism and external cost. Every test states its required services, credentials, network behavior, and parallelism assumptions. Default verification is deterministic and requires no external runtime services or credentials; normal Maven dependency resolution may access configured artifact repositories. The M3 Spring AI + Ollama vertical slice is real-model coverage, but remains explicitly opt-in.
 
 ## 2. Test layers
 
@@ -53,7 +53,7 @@ The test is skipped or classified as unavailable when Ollama or a selected model
 
 The intended profiles/jobs are:
 
-1. **default verification**: compile, unit, contract, JUnit extension, and deterministic comparison tests; no network, Ollama, Docker, PostgreSQL, MCP server, or cloud credentials.
+1. **default verification**: compile, unit, contract, JUnit extension, and deterministic comparison tests; no external runtime services, Ollama, Docker, PostgreSQL, MCP server, or cloud credentials. Maven artifact resolution may access configured repositories.
 2. **local-model**: opt-in M3 Spring AI/Ollama job with availability checks and pinned model/setup instructions.
 3. **rag**: deterministic retrieval tests, then opt-in PostgreSQL/Testcontainers tests.
 4. **mcp**: deterministic normalization tests, then opt-in server/container tests.

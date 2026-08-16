@@ -28,13 +28,15 @@ The roadmap is deliberately compressed so the actual product thesis is exercised
 
 **Why this milestone exists:** The specification needs an executable, quality-checked project foundation before execution contracts can be implemented.
 
-**In scope:** Maven Wrapper; parent dependency management; `modelmatrix-core`; `modelmatrix-junit`; license metadata; minimal formatting/static checks; default CI verification.
+**In scope:** Maven Wrapper; parent dependency management; `modelmatrix-core`; `modelmatrix-junit`; default CI verification.
+
+Licensing is deferred until the project is intentionally prepared for public OSS distribution.
 
 **Out of scope:** Spring AI, Ollama, real providers, RAG, MCP, cloud credentials, reporting, and production containers.
 
 **Architecture constraints:** Core has no prohibited dependency; JUnit depends inward; optional integrations are not required reactor modules; default verification is offline.
 
-**Implementation tasks:** Set Java 25 release; configure reproducible dependency versions and compiler warnings; add dependency-direction guard; document build commands and quality-tool purpose; ensure Maven Wrapper scripts and `.mvn/wrapper` metadata remain commit-able even though `*.jar` is globally ignored, adding a narrow ignore exception if the chosen wrapper distribution includes `.mvn/wrapper/maven-wrapper.jar`.
+**Implementation tasks:** Set Java 25 release; configure reproducible dependency versions and compiler warnings; add dependency-direction guard; document build commands and enforcement purpose; ensure Maven Wrapper scripts and `.mvn/wrapper` metadata remain commit-able even though `*.jar` is globally ignored, adding a narrow ignore exception if the chosen wrapper distribution includes `.mvn/wrapper/maven-wrapper.jar`.
 
 **Required tests:** Clean wrapper build; core test smoke path; JUnit module smoke path; core dependency inspection; verification that required Maven Wrapper files are not ignored.
 
@@ -164,17 +166,19 @@ The roadmap is deliberately compressed so the actual product thesis is exercised
 
 ## M8 — OSS release hardening
 
-**Goal:** Make the library publishable and maintainable as a real open-source project.
+**Goal:** Prepare the library for public OSS distribution if that release is intentionally approved, while making it maintainable as a real open-source project.
 
 **Why this milestone exists:** The framework needs contributor ergonomics, compatibility policy, and release discipline in addition to working behavior.
 
-**In scope:** Public API/Javadocs review; README usage; Maven Central/release metadata; Apache-2.0 notices; GitHub Actions; semantic versioning; security/dependency policy; changelog and contribution guidance.
+**In scope:** Public API/Javadocs review; README usage; Maven Central/release metadata; licensing and notices appropriate to the intended public distribution; GitHub Actions; semantic versioning; security/dependency policy; changelog and contribution guidance.
+
+Licensing remains deferred until the project is intentionally prepared for public OSS distribution.
 
 **Out of scope:** Hosted service, mandatory infrastructure, and breaking API expansion for marketing purposes.
 
 **Architecture constraints:** SemVer reflects public API; optional modules remain optional; release builds are reproducible; external tests are separate from required checks.
 
-**Implementation tasks:** Establish compatibility baseline; perform dependency/license/security review; document release workflow; validate clean checkout and offline/default build; archive completed execution plans.
+**Implementation tasks:** Establish compatibility baseline; perform dependency, licensing, and security review for the intended public distribution; document release workflow; validate clean checkout and offline/default build; archive completed execution plans.
 
 **Required tests:** Full default verification; module compatibility checks; sample consumer build; opt-in integration smoke jobs; release artifact inspection.
 

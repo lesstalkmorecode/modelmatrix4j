@@ -30,12 +30,6 @@ replay_pid*
 *.tar.gz
 *.rar
 
-# Maven Wrapper is source-controlled; keep its optional distribution JAR trackable.
-!.mvn/
-!.mvn/wrapper/
-!.mvn/wrapper/maven-wrapper.jar
-!.mvn/wrapper/maven-wrapper.properties
-
 # Local tooling and generated files
 .junie/
 .mvn/timing.properties
