@@ -8,6 +8,7 @@
 - `docs/TEST_STRATEGY.md` defines test layers and provider isolation.
 - `docs/ROADMAP.md` defines milestone scope and acceptance criteria.
 - `docs/QUALITY_GATES.md` maps approved architectural rules to executable, manual, or deferred enforcement.
+- `docs/AGENTIC_WORKFLOW.md` defines multi-agent roles, delegation boundaries, review, and completion rules.
 - `docs/adr/` contains durable architecture decisions.
 - `docs/exec-plans/` contains temporary implementation plans; completed plans move to `completed/`.
 
