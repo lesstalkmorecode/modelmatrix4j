@@ -1,0 +1,4 @@
+interface:
+  display_name: "ModelMatrix Milestone"
+  short_description: "Orchestrate dependency-safe milestone delivery"
+  default_prompt: "Use $modelmatrix-milestone to execute an approved milestone with actual dependency-ordered agents."

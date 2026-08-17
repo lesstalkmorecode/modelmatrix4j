@@ -1,23 +1,31 @@
 # ModelMatrix4J repository guidance
 
-## Navigation
+## Scope
 
-- `docs/PRODUCT_SPEC.md` defines the product boundary and MVP.
-- `docs/ARCHITECTURE.md` defines module and dependency decisions.
-- `docs/DOMAIN_MODEL.md` defines the minimum domain vocabulary.
-- `docs/TEST_STRATEGY.md` defines test layers and provider isolation.
-- `docs/ROADMAP.md` defines milestone scope and acceptance criteria.
-- `docs/QUALITY_GATES.md` maps approved architectural rules to executable, manual, or deferred enforcement.
-- `docs/AGENTIC_WORKFLOW.md` defines multi-agent roles, delegation boundaries, review, and completion rules.
-- `docs/adr/` contains durable architecture decisions.
-- `docs/exec-plans/` contains temporary implementation plans; completed plans move to `completed/`.
+- `docs/ROADMAP.md` authorizes product milestones. A user's explicit task may authorize repository maintenance, but it does not authorize product behavior.
+- Before editing a module, explicitly read that module's nearest AGENTS.md.
+- Change only the exact files or bounded paths in the delegation. Do not cross module boundaries, add dependencies, or change public/shared APIs without returning to the orchestrator for a revised task.
+- Do not implement a later milestone, invent future packages, or create empty packages and placeholders. Create a package only with its first required production type.
 
-## Engineering rules
+## Dependencies and review
 
-1. Implementation proceeds only through the currently approved roadmap milestone; functionality from later milestones must not be implemented prematurely.
-2. Keep `modelmatrix-core` framework-free and provider-neutral. It must not depend on Spring, Spring Boot, Spring AI, MCP, PostgreSQL, or provider SDKs.
-3. JUnit Jupiter is an integration layer, not a dependency of core. Optional integrations must never be required for the default build.
-4. Prefer a small number of stable value objects and ports over speculative interfaces. New public API requires a documented use case and tests.
-5. Deterministic tests must not call real models. Real-model, database, MCP, and cloud tests belong in explicitly opt-in integration-test source sets/profiles.
-6. Keep architectural decisions in `docs/` and record consequential reversals as ADRs. Keep this file concise and navigational.
-7. Dependencies must have licenses suitable for the intended use of the project and must be reviewed before public distribution. Keep builds reproducible and use semantic versioning. Do not add infrastructure that the product specification does not justify.
+For authorized delegated work, follow `.agents/skills/modelmatrix-milestone/SKILL.md`, the single workflow source of truth.
+
+A task starts only after its named prerequisites are finished and reconciled. Writers have exclusive scope. Reviewers are read-only, use different actual agents from the implementer, and review the integrated diff.
+
+## Boundaries
+
+- `modelmatrix-core` is JDK-only, provider/framework-neutral, and has no production JUnit dependency.
+- `modelmatrix-junit` depends inward on supported core contracts and JUnit Jupiter; core never depends on it.
+- Default tests are deterministic and offline. External services, credentials, real models, databases, MCP, and cloud providers are opt-in only when their milestone authorizes them.
+- `docs/PRODUCT_SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/ROADMAP.md` define product scope and module direction.
+
+## Completion
+
+The one canonical verification command, run from the repository root, is:
+
+```text
+./mvnw -B verify
+```
+
+Before handoff, also inspect the full diff and run `git diff --check`. Do not commit or push unless the user explicitly asks.

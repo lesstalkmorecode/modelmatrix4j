@@ -1,0 +1,4 @@
+interface:
+  display_name: "ModelMatrix Verify"
+  short_description: "Run canonical Maven verification"
+  default_prompt: "Use $modelmatrix-verify to verify the reconciled repository state before completion."

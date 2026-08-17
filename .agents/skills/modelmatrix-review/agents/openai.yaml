@@ -1,0 +1,6 @@
+interface:
+  display_name: "ModelMatrix Review"
+  short_description: "Run independent architecture and risk reviews"
+  default_prompt: "Use $modelmatrix-review to independently review the integrated milestone changes."
+policy:
+  allow_implicit_invocation: false

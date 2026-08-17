@@ -53,24 +53,11 @@ An eventual `modelmatrix-integration-tests` module or equivalent Maven profile m
 
 ### Java package and source layout
 
-The Java package root is `com.modelmatrix4j`. The following boundaries are conditional responsibilities, not created or pre-authorized packages. A package is created only with its first concrete class approved for the current milestone.
+The Java package root is `com.modelmatrix4j`. Concrete packages are designed only when an approved milestone introduces their first real production types and tests. The task delegation then records the necessary package and dependency boundaries; documentation does not reserve future package names.
 
-| Package | Responsibility and disposition |
-| --- | --- |
-| `com.modelmatrix4j.core.scenario` | Provider-neutral scenario identity and minimal input; conditional M2 public package. |
-| `com.modelmatrix4j.core.model` | Model descriptor identity and non-secret descriptive metadata only; conditional M2 public package, not a general domain/model bucket. |
-| `com.modelmatrix4j.core.result` | Immutable run facts, terminal status, safe diagnostics, and the minimal M2 compatibility result; conditional M2 public package. A separate `core.compatibility` package is rejected for M2. |
-| `com.modelmatrix4j.core.execution` | The smallest consumer-required executable boundary and programmatic execution surface; conditional M2 public package. |
-| `com.modelmatrix4j.core` | Existing namespace, not a miscellaneous bucket; use only for a proven top-level entry point. |
-| `com.modelmatrix4j.core.internal...` | Conditional implementation-only, responsibility-named families for cohesive mechanics such as orchestration, comparison, or diagnostics. A flat internal dumping ground and speculative descendants are rejected. |
-| `com.modelmatrix4j.junit` | Minimal test-author-facing integration; conditional M2 public package. A redundant `junit.api` package is rejected. |
-| `com.modelmatrix4j.junit.internal...` | Conditional implementation-only lifecycle and resolution mechanics. Separate lifecycle/resolution descendants remain deferred until concrete classes prove cohesion. |
+Keep types and members at the narrowest useful visibility. Public API requires a concrete current-milestone consumer, a consumer test, and independent review. Public signatures must not expose internal implementation, framework/provider, or later-capability types.
 
-Package dependencies are one-way: `scenario` and `model` are foundations; `result` may reference their identities; `execution` may consume those three. These dependencies must not point back toward execution. A narrowly reviewed public entry point may invoke internal implementation only when the invoked implementation creates no dependency path back to the calling entry-point package. Therefore, an entry point inside `execution` cannot invoke a helper that depends back on `execution`; a separately located composition entry point may invoke internal orchestration that consumes supported execution contracts when no dependency returns to the composition package. Other internal mechanics consume supported public contracts; comparison and diagnostic mechanics do not depend back on orchestration. JUnit depends only on supported core public packages, never core internals; core never depends on JUnit.
-
-Default every type and member to the narrowest visibility. Public or protected exposure requires a current-milestone consumer, an API-inventory entry, a consumer test, and independent API review. Public signatures must not expose internal implementation, framework/provider, or later-capability types anywhere in their type graph, including parameters, returns, generic arguments or bounds, checked exceptions, annotations, inheritance, record components, sealed permits, or public constants. Because Java subpackages do not share package-private access and no JPMS export boundary exists, an `.internal` name is a convention rather than enforcement; making an internal type public is still API exposure and requires the same review.
-
-Tests remain in the module whose contract they exercise. Internal tests may mirror the implementation package; consumer-facing tests must use a package that cannot rely on package-private access. Deterministic fakes remain test-scoped and local to the consuming module. Do not create empty directories, `package-info` placeholders, reserved packages, generic `api`/`spi`/`domain` layers, or shared test-support packages in anticipation of future work.
+Tests remain in the module whose contract they exercise. Deterministic fakes remain test-scoped and local to the consuming module. Do not create empty directories, `package-info` placeholders, speculative layers, or shared test-support packages in anticipation of future work. JUnit depends only on supported core public contracts; core never depends on JUnit.
 
 ## 4. Dependency direction
 
