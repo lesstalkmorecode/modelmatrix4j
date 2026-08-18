@@ -53,7 +53,19 @@ An eventual `modelmatrix-integration-tests` module or equivalent Maven profile m
 
 ### Java package and source layout
 
-The Java package root is `com.modelmatrix4j`. Concrete packages are designed only when an approved milestone introduces their first real production types and tests. The task delegation then records the necessary package and dependency boundaries; documentation does not reserve future package names.
+The Java package root is `com.modelmatrix4j`. M2 exposes responsibility-based packages:
+
+- `core.scenario` contains the immutable scenario input;
+- `core.model` contains model identity, the adapter port, and the adapter-backed target;
+- `core.execution` contains the `ModelMatrix` facade and its package-private execution,
+  comparison, and safe-result mapping;
+- `core.result` contains immutable terminal run and compatibility results.
+
+`ModelMatrix` expands work in deterministic model-major/repetition-minor order. A matrix-local
+executor invokes only the provider-neutral `ModelAdapter` port with bounded admission and virtual
+threads. Compatibility is evaluated from short-lived normalized outcomes before lossy redaction;
+only sanitized, bounded `RunResult` values cross the public boundary. JUnit calls this facade and
+does not reproduce execution or comparison behavior.
 
 Keep types and members at the narrowest useful visibility. Public API requires a concrete current-milestone consumer, a consumer test, and independent review. Public signatures must not expose internal implementation, framework/provider, or later-capability types.
 
@@ -146,7 +158,8 @@ sequenceDiagram
     Test->>Ext: declare one Spring AI scenario and two local models
     Ext->>Engine: resolve one run per model
     Engine->>Adapter: invoke provider-neutral request
-    Adapter-->>Engine: normalized text/timing/failure facts
+    Adapter-->>Engine: raw text / exception
+    Note over Engine: normalization, timing, failure classification
     Engine->>Assert: compare run results and evaluate assertions
     Assert-->>Engine: compatibility diagnostics
     Engine-->>Ext: matrix compatibility result
@@ -157,16 +170,14 @@ The core execution path must make timeout, cancellation, repetition, and concurr
 
 ## 9. Result model
 
-The core `RunResult` is the one immutable record of an execution, not a live response object. There is no separate public lifecycle aggregate. In M2/M3 it contains only:
+The core `RunResult` is the one immutable record of an execution, not a live response object. There is no separate public lifecycle aggregate. In M2 it contains only the small, well-defined contract:
 
 - run identity, scenario identity, model descriptor, repetition index, and resolved configuration identity;
-- lifecycle status: passed, failed, unavailable, cancelled, timed out, or otherwise explicitly classified;
-- basic normalized textual output where available;
-- start/end or duration data using a monotonic measurement for latency;
-- normalized failure category, safe message, and diagnostic metadata;
-- bounded safe diagnostics.
+- lifecycle status: one of COMPLETED, FAILED, UNAVAILABLE, TIMED_OUT, or CANCELLED;
+- a single duration measurement (monotonic) representing execution latency;
+- normalized textual output (available only for COMPLETED runs) and a bounded diagnostic string (available for failures).
 
-Secrets, authorization headers, prompts marked sensitive, and unbounded provider payloads must not be copied into results by default. Raw provider responses are adapter diagnostics and require explicit opt-in. Structured-output and Java tool-call projections begin in M4; retrieval projections begin in M5; MCP projections begin in M6. No generic event or interaction abstraction is introduced in M2 merely to anticipate those capabilities.
+Secrets, authorization headers, prompts marked sensitive, and unbounded provider payloads must not be copied into results by default. Adapter-level diagnostics remain outside the core `RunResult` unless explicitly projected by an opt-in adapter. Structured output, tool-call projections, and retrieval projections are introduced only in later milestones; do not add a generic event/interaction abstraction in M2 to anticipate them.
 
 ## 10. Assertion architecture
 
@@ -210,7 +221,23 @@ The minimal compatibility result belongs to core from M2 because M2 already comp
 
 ## 16. Concurrency and failure isolation
 
-Runs are independent work items by default. Shared mutable adapter state, global model clients, random seeds, temporary files, and port allocation must be explicit. Parallel execution is opt-in until adapters prove thread safety. A failed or timed-out run must not prevent remaining matrix work from completing unless the caller chooses fail-fast. Results must retain partial diagnostics when safe.
+M2 executes different declared models concurrently on virtual threads; a small matrix-local bound
+limits simultaneous physical adapter invocations. Repetitions for
+one declared model remain sequential because core does not assume that its adapter instance is
+thread-safe.
+Results are collected in model declaration order and then repetition order, independent of physical
+completion order. A failed, unavailable, or adapter-cancelled repetition does not suppress later
+repetitions. A timed-out repetition suppresses later repetitions of that declared model so that a
+non-cooperative invocation cannot cause concurrent re-entry; other models continue. Caller interruption
+stops model tasks from starting later work, classifies in-flight and not-yet-started repetitions as
+cancelled without further adapter invocation, drains a complete deterministic outcome set that
+preserves already-completed results, and restores the caller's interrupt status.
+
+Admission state is local to one matrix, so saturated or non-cooperative work cannot consume another
+matrix's capacity. A physical invocation retains its permit until the adapter actually exits, including
+after its result has timed out. The timeout is one total model-execution budget and therefore includes
+time waiting for physical admission. Shared mutable adapter state, global model clients, random seeds,
+temporary files, and port allocation must remain explicit. Results retain partial diagnostics when safe.
 
 External failures are isolated by test layer and profile. A deterministic test never contacts a provider. An Ollama test never runs unless its profile and availability check are enabled. Cloud tests require explicit credentials and a separate CI job.
 

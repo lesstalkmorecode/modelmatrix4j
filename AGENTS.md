@@ -13,6 +13,13 @@ For authorized delegated work, follow `.agents/skills/modelmatrix-milestone/SKIL
 
 A task starts only after its named prerequisites are finished and reconciled. Writers have exclusive scope. Reviewers are read-only, use different actual agents from the implementer, and review the integrated diff.
 
+## Agent configuration
+
+- `AGENTS.md` contains shared repository rules.
+- `.agents/skills/` contains shared engineering workflows.
+- `.agents/*.md` contains Junie subagent definitions.
+- `.codex/agents/*.toml` contains Codex-specific subagent definitions.
+
 ## Boundaries
 
 - `modelmatrix-core` is JDK-only, provider/framework-neutral, and has no production JUnit dependency.
