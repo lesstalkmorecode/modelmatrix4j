@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  external-consumer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Verify external consumer
+        run: ./scripts/verify-external-consumer.sh
+      - name: Upload ModelMatrix report
+        uses: actions/upload-artifact@v7
+        with:
+          name: modelmatrix-report
+          path: |
+            consumer-tests/report-consumer/target/modelmatrix-report.json
+            consumer-tests/report-consumer/target/modelmatrix-report.txt
+          if-no-files-found: error
+
+  reproducible-builds:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Verify reproducible build artifacts
+        run: bash scripts/verify-reproducible-builds.sh
+
+  verify:
+    needs:
+      - external-consumer
+      - reproducible-builds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Verify
+        run: ./mvnw -B clean verify
